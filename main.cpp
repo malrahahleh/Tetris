@@ -4,18 +4,27 @@
 
 #pragma comment (lib,"d3d9.lib")
 
-#define SCREEN_HIEGHT 768
-#define SCREEN_WIDTH 1366
+#define CUSTOMFVF (D3DFVF_XYZRHW | D3DFVF_DIFFUSE)
+#define SCREEN_HIEGHT 600
+#define SCREEN_WIDTH 800
 
 LRESULT __stdcall WindowProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam);
 
 void InitD3d(HWND);
 void RenderFramer();
 void CleandD3d();
-
+void Init_Triangle();
 
 LPDIRECT3D9 d3d;
 LPDIRECT3DDEVICE9 d3ddev;
+LPDIRECT3DVERTEXBUFFER9 v_buffer = NULL;
+
+
+struct CUSTOMVERTEX{
+	FLOAT x, y, z, rhw;
+	DWORD color;
+};
+
 
 int __stdcall WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nCmdShow)
 {
@@ -38,7 +47,7 @@ int __stdcall WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLin
     hWnd = CreateWindowEx(NULL,
                           L"WindowClass",    // name of the window class
                           L"Our First Windowed Program",   // title of the window
-                          WS_EX_TOPMOST | WS_POPUP,    // window style
+                          WS_OVERLAPPEDWINDOW,    // window style
                           0,    // x-position of the window
                           0,    // y-position of the window
                           SCREEN_WIDTH,    // width of the window
@@ -87,12 +96,10 @@ void InitD3d(HWND hWnd){
 	D3DPRESENT_PARAMETERS d3dpp;
 
 	ZeroMemory(&d3dpp,sizeof(d3dpp));
-	d3dpp.Windowed = FALSE;
+	d3dpp.Windowed = TRUE;
 	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
 	d3dpp.hDeviceWindow = hWnd;
-	d3dpp.BackBufferFormat = D3DFMT_X8R8G8B8;
-	d3dpp.BackBufferHeight = SCREEN_HIEGHT;
-	d3dpp.BackBufferWidth = SCREEN_WIDTH;
+	
 
 	d3d->CreateDevice(D3DADAPTER_DEFAULT,
 						D3DDEVTYPE_HAL,
@@ -100,6 +107,7 @@ void InitD3d(HWND hWnd){
 						D3DCREATE_SOFTWARE_VERTEXPROCESSING,
 						&d3dpp,
 						&d3ddev);
+	Init_Triangle();
 }
 
 void RenderFramer(){
@@ -107,14 +115,48 @@ void RenderFramer(){
 
 	d3ddev->BeginScene();
 
-	d3ddev->EndScene();
+	d3ddev->SetFVF(CUSTOMFVF);
 
+	d3ddev->SetStreamSource(0,v_buffer,0,sizeof(CUSTOMVERTEX));
 	
+	d3ddev->DrawPrimitive(D3DPT_TRIANGLESTRIP,0,2);
+
+	d3ddev->EndScene();
 
 	d3ddev->Present(NULL,NULL,NULL,NULL);
 }
 
 void CleandD3d(){
+	v_buffer->Release();
 	d3ddev->Release();
 	d3d->Release();
+}
+
+void Init_Triangle(){
+
+	CUSTOMVERTEX vertices[]=
+	{
+		{300.0f,124.0f,0.5f,1.0,D3DCOLOR_XRGB(0,0,255),},
+		{450.0f,124.0f,0.5f,1.0,D3DCOLOR_XRGB(0,0,255),},
+		{300.0f,250.0f,0.5f,1.0f,D3DCOLOR_XRGB(0,0,255),},
+		{450.0f,250.0f,0.5f,1.0f,D3DCOLOR_XRGB(0,0,200),},
+		
+	};
+
+
+	d3ddev->CreateVertexBuffer(sizeof(vertices)*sizeof(CUSTOMVERTEX),
+								0,
+								CUSTOMFVF,
+								D3DPOOL_MANAGED,
+								&v_buffer,
+								NULL);
+
+	VOID* pVoid;
+
+	v_buffer->Lock(0,0,&pVoid,0);
+
+	memcpy(pVoid,vertices,sizeof(vertices));
+	
+	v_buffer->Unlock();
+
 }
