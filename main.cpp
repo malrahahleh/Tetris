@@ -1,10 +1,13 @@
 #include<Windows.h>
 #include<WindowsX.h>
 #include<d3d9.h>
+#include<d3dx9.h>
+
 
 #pragma comment (lib,"d3d9.lib")
+#pragma comment (lib,"d3dx9.lib")
 
-#define CUSTOMFVF (D3DFVF_XYZRHW | D3DFVF_DIFFUSE)
+#define CUSTOMFVF (D3DFVF_XYZ | D3DFVF_DIFFUSE)
 #define SCREEN_HIEGHT 600
 #define SCREEN_WIDTH 800
 
@@ -18,10 +21,11 @@ void Init_Triangle();
 LPDIRECT3D9 d3d;
 LPDIRECT3DDEVICE9 d3ddev;
 LPDIRECT3DVERTEXBUFFER9 v_buffer = NULL;
+float translationOnY = 0.0f;
 
 
 struct CUSTOMVERTEX{
-	FLOAT x, y, z, rhw;
+	FLOAT x, y, z;
 	DWORD color;
 };
 
@@ -85,6 +89,14 @@ LRESULT __stdcall WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 			PostQuitMessage(0);
 			return 0;
 		}break;
+
+		case WM_KEYDOWN : {
+			if(wParam == VK_UP)
+				translationOnY += 0.25f;
+			 else if(wParam == VK_DOWN)
+				translationOnY -= 0.25f;
+			return 0;
+		}break;
 	}
 
     return DefWindowProc(hWnd,message,wParam,lParam);
@@ -107,7 +119,13 @@ void InitD3d(HWND hWnd){
 						D3DCREATE_SOFTWARE_VERTEXPROCESSING,
 						&d3dpp,
 						&d3ddev);
+	
+	
 	Init_Triangle();
+
+	d3ddev->SetRenderState(D3DRS_LIGHTING,FALSE);
+
+
 }
 
 void RenderFramer(){
@@ -115,11 +133,36 @@ void RenderFramer(){
 
 	d3ddev->BeginScene();
 
+
 	d3ddev->SetFVF(CUSTOMFVF);
+
+	D3DXMATRIX matView;
+
+	D3DXMATRIX matWorld;
+
+	D3DXMatrixTranslation(&matWorld,0.0f,translationOnY,0.0f);
+
+	d3ddev->SetTransform(D3DTS_WORLD,&matWorld);
+
+	D3DXMatrixLookAtLH(&matView,
+						&D3DXVECTOR3(0.0f,0.0f,10.0f),
+						&D3DXVECTOR3(0.0f,0.0f,0.0f),
+						&D3DXVECTOR3(0.0f,1.0f,0.0f));
+
+	d3ddev->SetTransform(D3DTS_VIEW,&matView);
+
+	D3DXMATRIX matProjection;
+
+	D3DXMatrixPerspectiveFovLH(&matProjection,
+								D3DXToRadian(45.0f),
+								(FLOAT)SCREEN_WIDTH / (FLOAT)SCREEN_HIEGHT,
+								1.0f,
+								100.0f);
+	d3ddev->SetTransform(D3DTS_PROJECTION,&matProjection);
 
 	d3ddev->SetStreamSource(0,v_buffer,0,sizeof(CUSTOMVERTEX));
 	
-	d3ddev->DrawPrimitive(D3DPT_TRIANGLESTRIP,0,2);
+	d3ddev->DrawPrimitive(D3DPT_TRIANGLELIST,0,1);
 
 	d3ddev->EndScene();
 
@@ -136,10 +179,10 @@ void Init_Triangle(){
 
 	CUSTOMVERTEX vertices[]=
 	{
-		{300.0f,124.0f,0.5f,1.0,D3DCOLOR_XRGB(0,0,255),},
-		{450.0f,124.0f,0.5f,1.0,D3DCOLOR_XRGB(0,0,255),},
-		{300.0f,250.0f,0.5f,1.0f,D3DCOLOR_XRGB(0,0,255),},
-		{450.0f,250.0f,0.5f,1.0f,D3DCOLOR_XRGB(0,0,200),},
+		{1.0f,-1.0f,0.0f,D3DCOLOR_XRGB(0,0,255),},
+		{0.0f,1.0f,0.0f,D3DCOLOR_XRGB(0,0,255),},
+		{-1.0f,-1.f,0.0f,D3DCOLOR_XRGB(0,0,255),},
+		//{4.5f,2.5f,0.0f,D3DCOLOR_XRGB(0,0,200),},
 		
 	};
 
