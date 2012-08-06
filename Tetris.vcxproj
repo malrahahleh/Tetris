@@ -76,7 +76,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="camera.cpp" />
+    <ClCompile Include="core3d.cpp" />
+    <ClCompile Include="coreinputs.cpp" />
+    <ClCompile Include="keyboard.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="mesh.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="camera.h" />
+    <ClInclude Include="core3d.h" />
+    <ClInclude Include="coreinput.h" />
+    <ClInclude Include="coretypes.h" />
+    <ClInclude Include="keyboard.h" />
+    <ClInclude Include="mesh.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
