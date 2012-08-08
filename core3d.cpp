@@ -28,6 +28,7 @@ void Core3D::InitD3d(HWND hWnd){
 
 	d3ddev->SetRenderState(D3DRS_LIGHTING,FALSE);
 
+	
 }
 
 void Core3D::CleandD3d(){
@@ -38,40 +39,27 @@ void Core3D::CleandD3d(){
 
 
 void Core3D::RenderFramer(){
+
+	GameBehavoir* gb;
+	gb = GameBehavoir::getInstance();
+	gb->Update();
+
 	d3ddev->Clear(0,NULL,D3DCLEAR_TARGET,D3DCOLOR_XRGB(0,0,0),1.0f,0);
-
 	d3ddev->BeginScene();
-
+	
+	
 
 	d3ddev->SetFVF(CUSTOMFVF);
 
-	D3DXMATRIX matView;
-
 	D3DXMATRIX matWorld;
-
 	D3DXMatrixTranslation(&matWorld,0.0f,0.0f,0.0f);
 
-	d3ddev->SetTransform(D3DTS_WORLD,&matWorld);
-
-	D3DXMatrixLookAtLH(&matView,
-						&D3DXVECTOR3(0.0f,0.0f,10.0f),
-						&D3DXVECTOR3(0.0f,0.0f,0.0f),
-						&D3DXVECTOR3(0.0f,1.0f,0.0f));
-
-	d3ddev->SetTransform(D3DTS_VIEW,&matView);
-
-	D3DXMATRIX matProjection;
-
-	D3DXMatrixPerspectiveFovLH(&matProjection,
-								D3DXToRadian(45.0f),
-								(FLOAT)SCREEN_WIDTH / (FLOAT)SCREEN_HIEGHT,
-								1.0f,
-								100.0f);
-	d3ddev->SetTransform(D3DTS_PROJECTION,&matProjection);
-
 	
+	d3ddev->SetTransform(D3DTS_WORLD,&matWorld);
+	d3ddev->SetTransform(D3DTS_VIEW,gb->GetView());
+	d3ddev->SetTransform(D3DTS_PROJECTION,gb->GetProjection());
+
 
 	d3ddev->EndScene();
-
 	d3ddev->Present(NULL,NULL,NULL,NULL);
 }

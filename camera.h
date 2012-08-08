@@ -7,10 +7,13 @@ class Camera {
 public:
 	Camera();
 	~Camera();
-	static void Position(VECTOR3);
-	static void LookAt(VECTOR3);
+	void Position(VECTOR3);
+	void LookAt(VECTOR3);
+	void Enabled();
+	D3DXMATRIX * GetCameraLens();
+	D3DXMATRIX * GetCameraPosition();
 private:
-	D3DXMatrix matView;
+	D3DXMATRIX matView;
 	D3DXMATRIX matProjection;
 
 };

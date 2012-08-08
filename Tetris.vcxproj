@@ -79,6 +79,7 @@
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="core3d.cpp" />
     <ClCompile Include="coreinputs.cpp" />
+    <ClCompile Include="gamebehavoir.cpp" />
     <ClCompile Include="keyboard.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mesh.cpp" />
@@ -88,6 +89,7 @@
     <ClInclude Include="core3d.h" />
     <ClInclude Include="coreinput.h" />
     <ClInclude Include="coretypes.h" />
+    <ClInclude Include="gamebehavoir.h" />
     <ClInclude Include="keyboard.h" />
     <ClInclude Include="mesh.h" />
   </ItemGroup>

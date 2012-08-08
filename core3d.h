@@ -4,6 +4,7 @@
 #include<d3d9.h>
 #include<d3dx9.h>
 #include"coretypes.h"
+#include"gamebehavoir.h"
 
 #pragma comment (lib,"d3d9.lib")
 #pragma comment (lib,"d3dx9.lib")
@@ -16,6 +17,7 @@ public:
 	void InitD3d(HWND);
 	void RenderFramer();
 	void CleandD3d();
+	void GetEnabledCamera();
 
 private:
 	LPDIRECT3D9 d3d;
